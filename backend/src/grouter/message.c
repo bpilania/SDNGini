@@ -81,9 +81,9 @@ void printGPktPayload(gpacket_t *msg, int level)
 			printTCPPacket(msg);
 		}
 		break;
-	case ARP_PROTOCOL:
+/*	case ARP_PROTOCOL:
 		printARPPacket(msg);
-		break;
+		break;*/
 	default:
 		// ignore other cases for now!
 		break;
@@ -157,7 +157,7 @@ int printIPPacket(gpacket_t *msg)
 	return ip_pkt->ip_prot;
 }
 
-
+/*
 void printARPPacket(gpacket_t *msg)
 {
 	arp_packet_t *apkt;
@@ -174,7 +174,7 @@ void printARPPacket(gpacket_t *msg)
 	printf(" ARP src ip addr %s \n", IP2Dot(tmpbuf, gNtohl((uchar *)tmpbuf, apkt->src_ip_addr)));
 	printf(" ARP dst hw addr %s \n", MAC2Colon(tmpbuf, apkt->dst_hw_addr));
 	printf(" ARP dst ip addr %s \n", IP2Dot(tmpbuf, gNtohl((uchar *)tmpbuf, apkt->dst_ip_addr)));
-}
+}*/
 
 
 void printICMPPacket(gpacket_t *msg)

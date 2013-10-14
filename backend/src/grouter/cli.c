@@ -81,7 +81,7 @@ int CLIInit(router_config *rarg)
 	registerCLI("source", sourceCmd, SHELP_SOURCE, USAGE_SOURCE, LHELP_SOURCE); // Check
 	registerCLI("ifconfig", ifconfigCmd, SHELP_IFCONFIG, USAGE_IFCONFIG, LHELP_IFCONFIG);
 	registerCLI("route", routeCmd, SHELP_ROUTE, USAGE_ROUTE, LHELP_ROUTE);
-	registerCLI("arp", arpCmd, SHELP_ARP, USAGE_ARP, LHELP_ARP);
+	//registerCLI("arp", arpCmd, SHELP_ARP, USAGE_ARP, LHELP_ARP);
 	registerCLI("ping", pingCmd, SHELP_PING, USAGE_PING, LHELP_PING); // Check
 	registerCLI("console", consoleCmd, SHELP_CONSOLE, USAGE_CONSOLE, LHELP_CONSOLE); // Check
 	registerCLI("halt", haltCmd, SHELP_HALT, USAGE_HALT, LHELP_HALT); // Check
@@ -547,7 +547,7 @@ void routeCmd()
  * arp del
  * arp del -ip ip_addr
  */
-void arpCmd()
+/*void arpCmd()
 {
 	char *next_tok;
 	uchar mac_addr[6], ip_addr[4];
@@ -593,7 +593,7 @@ void arpCmd()
 				}
             }
     }
-}
+}*/
 
 
 

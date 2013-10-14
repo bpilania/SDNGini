@@ -16,6 +16,7 @@
 #include "classifier.h"
 #include "filter.h"
 #include <pthread.h>
+#include "flowtable.h"
 
 router_config rconfig = {.router_name=NULL, .gini_home=NULL, .cli_flag=0, .config_file=NULL, .config_dir=NULL, .ghandler=0, .clihandler= 0, .scheduler=0, .worker=0, .schedcycle=10000};
 pktcore_t *pcore;
@@ -53,9 +54,10 @@ int isPIDAlive(int pid);
 
 int main(int ac, char *av[])
 {
+	printf("\n$$$$$  CHECKPOINT 1   $$$$$\n");
+
 	char rpath[MAX_NAME_LEN];
 	int status, *jstatus;
-	simplequeue_t *outputQ, *workQ, *qtoa;
 
 	// setup the program properties
 	setupProgram(ac, av);
@@ -64,39 +66,44 @@ int main(int ac, char *av[])
 	// shutdown the router on receiving SIGUSR1 or SIGUSR2
 	redefineSignalHandler(SIGUSR1, shutdownRouter);
 	redefineSignalHandler(SIGUSR2, shutdownRouter);
-
+	printf("\n$$$$$  CHECKPOINT 2   $$$$$\n");
 	outputQ = createSimpleQueue("outputQueue", INFINITE_Q_SIZE, 0, 1);
-	workQ = createSimpleQueue("work Queue", INFINITE_Q_SIZE, 0, 1);
+	queue1 = createSimpleQueue("Queue1", INFINITE_Q_SIZE, 0, 1);
+	queue2 = createSimpleQueue("Queue2", INFINITE_Q_SIZE, 0, 1);
 
 	GNETInit(&(rconfig.ghandler), rconfig.config_dir, rconfig.router_name, outputQ);
-	ARPInit();
+	//ARPInit();
 	IPInit();
 
 	classifier = createClassifier();
 	filter = createFilter(classifier, 0);
 
-	pcore = createPacketCore(rconfig.router_name, outputQ, workQ);
+	pthread_t thread2;
+	//test_threads(&thread1);
 
+	process_packet_from_queue1(&thread2, &flowtable);
+
+	printf("\nYou can always do other work here\n");
+
+
+
+
+	printf("\n$$$$$  CHECKPOINT 3   $$$$$\n");
 	// add a default Queue.. the createClassifier has already added a rule with "default" tag
 	// char *qname, char *dqisc, double qweight, double delay_us, int nslots);
-	addPktCoreQueue(pcore, "default", "taildrop", 1.0, 2.0, 0);
-	rconfig.scheduler = PktCoreSchedulerInit(pcore);
-	rconfig.worker = PktCoreWorkerInit(pcore);
 
 	infoInit(rconfig.config_dir, rconfig.router_name);
 	addTarget("Output Queue", outputQ);
-	qtoa = getCoreQueue(pcore, "default");
-	if (qtoa != NULL)
-		addTarget("Default Queue", qtoa);
-	else
-		printf("Error .. found null queue for default\n");
+
 
 	// start the CLI..
 	CLIInit(&(rconfig));
+	printf("\n$$$$$  CHECKPOINT 4   $$$$$\n");
 
 
-	wait4thread(rconfig.scheduler);
-	wait4thread(rconfig.worker);
+
+	printf("\n ************************Check Point 1*************************** \n");
+	pthread_join( thread2, NULL);
 	wait4thread(rconfig.ghandler);
 }
 

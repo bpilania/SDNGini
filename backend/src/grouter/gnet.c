@@ -504,7 +504,7 @@ int destroyInterface(interface_t *iface)
 	deleteRouteEntryByInterface(route_tbl, iface->interface_id);
 
 	// remove the ARP table entries
-	ARPDeleteEntry(iface->ip_addr);
+//	ARPDeleteEntry(iface->ip_addr);
 
 	verbose(2, "[destroyInterface]:: cancelling the fromdev handler.. ");
 	if (iface->state == INTERFACE_UP)
@@ -631,22 +631,22 @@ int downInterface(int index)
  * is used for simplicity.. Should we use more complex organizations??
  */
 
-int getARPCacheKey(uchar *ip)
+/*int getARPCacheKey(uchar *ip)
 {
 	unsigned int sum = 0;
 
 	sum = ip[0] + ip[1] + ip[2] + ip[3];
 	return sum % ARP_CACHE_SIZE;
-}
+}*/
 
 
-void GNETInitARPCache(void)
+/*void GNETInitARPCache(void)
 {
 	int i;
 
 	for (i = 0; i < ARP_CACHE_SIZE; i++)
 		arp_cache[i].is_empty = TRUE;
-}
+}*/
 
 
 /*
@@ -654,7 +654,7 @@ void GNETInitARPCache(void)
  * copy the MAC address in mac_addr and return TRUE
  * otherwise return FALSE -- mac_addr is undefined in this case.
  */
-int lookupARPCache(uchar *ip_addr, uchar *mac_addr)
+/*int lookupARPCache(uchar *ip_addr, uchar *mac_addr)
 {
 	int key;
 
@@ -667,10 +667,10 @@ int lookupARPCache(uchar *ip_addr, uchar *mac_addr)
 	}
 
 	return FALSE;
-}
+}*/
 
 
-void putARPCache(uchar *ip_addr, uchar *mac_addr)
+/*void putARPCache(uchar *ip_addr, uchar *mac_addr)
 {
 	int key;
 
@@ -678,11 +678,11 @@ void putARPCache(uchar *ip_addr, uchar *mac_addr)
 	arp_cache[key].is_empty = FALSE;
 	COPY_IP(arp_cache[key].ip_addr, ip_addr);
 	COPY_MAC(arp_cache[key].mac_addr, mac_addr);
-}
+}*/
 
 
 
-void printARPCache(void)
+/*void printARPCache(void)
 {
 	int i;
 	char tmpbuf[MAX_TMPBUF_LEN];
@@ -698,7 +698,7 @@ void printARPCache(void)
 			       MAC2Colon((tmpbuf+20), arp_cache[i].mac_addr));
 	printf("-----------------------------------------------------------\n");
 	return;
-}
+}*/
 
 
 
@@ -732,7 +732,7 @@ int GNETInit(int *ghandler, char *config_dir, char *rname, simplequeue_t *sq)
 	// do the initializations...
 	vpl_init(config_dir, rname);
 	GNETInitInterfaces();
- 	GNETInitARPCache();
+ 	//GNETInitARPCache();
 
 	thread_stat = pthread_create((pthread_t *)ghandler, NULL, GNETHandler, (void *)sq);
 	if (thread_stat != 0)
@@ -773,7 +773,7 @@ void *GNETHandler(void *outq)
 		// we have a valid interface handle -- iface.
 		COPY_MAC(in_pkt->data.header.src, iface->mac_addr);
 
-		if (in_pkt->frame.arp_valid == TRUE)
+/*		if (in_pkt->frame.arp_valid == TRUE)
 			putARPCache(in_pkt->frame.nxth_ip_addr, in_pkt->data.header.dst);
 		else if (in_pkt->frame.arp_bcast != TRUE)
 		{
@@ -785,8 +785,9 @@ void *GNETHandler(void *outq)
 				ARPResolve(in_pkt);
 				continue;
 			}
-		}
+		}*/
 
+		printf("\n*************************Calling To Ethernet Dev**********************\n");
 		iface->devdriver->todev((void *)in_pkt);
 
 	}

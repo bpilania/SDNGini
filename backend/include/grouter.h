@@ -94,6 +94,7 @@ typedef struct _router_config
 } router_config;
 
 
+
 // function prototypes for code in utils.c..
 int compareIPUsingMask(uchar *ip_addr, uchar *network, uchar *netmask);
 char *IP2Dot(char *buf, uchar ip_addr[]);

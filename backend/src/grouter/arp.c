@@ -17,16 +17,16 @@
 #include "packetcore.h"
 
 
-int tbl_replace_indx;            // overwrite this element if no free space in ARP table
-int buf_replace_indx;            // overwrite this element if no free space in ARP buffer
-arp_entry_t ARPtable[MAX_ARP];		                // ARP table
-arp_buffer_entry_t ARPbuffer[MAX_ARP_BUFFERS];   	// ARP buffer for unresolved packets
+//int tbl_replace_indx;            // overwrite this element if no free space in ARP table
+//int buf_replace_indx;            // overwrite this element if no free space in ARP buffer
+//arp_entry_t ARPtable[MAX_ARP];		                // ARP table
+//arp_buffer_entry_t ARPbuffer[MAX_ARP_BUFFERS];   	// ARP buffer for unresolved packets
 
 
-extern pktcore_t *pcore;
+//extern pktcore_t *pcore;
 
 
-void ARPInit()
+/*void ARPInit()
 {
 	gpacket_t in_pkt;
 	char tmpbuf[MAX_NAME_LEN];
@@ -36,7 +36,7 @@ void ARPInit()
 	ARPInitTable();                    // initialize APR table
 	ARPInitBuffer();                   // initialize ARP buffer
 
-}
+}*/
 
 
 /*
@@ -61,7 +61,8 @@ int ARPSend2Output(gpacket_t *pkt)
 	if (vlevel >= 3)
 		printGPacket(pkt, vlevel, "ARP_ROUTINE");
 
-	return writeQueue(pcore->outputQ, (void *)pkt, sizeof(gpacket_t));
+	printf("\n***ADDING PACKET TO OUTPUT Q\n");
+	return writeQueue(outputQ, (void *)pkt, sizeof(gpacket_t));
 }
 
 
@@ -72,7 +73,7 @@ int ARPSend2Output(gpacket_t *pkt)
  * and the packet that caused the request is buffered. The buffer is flushed
  * when the reply comes in.
  */
-int ARPResolve(gpacket_t *in_pkt)
+/*int ARPResolve(gpacket_t *in_pkt)
 {
 	uchar mac_addr[6];
 	char tmpbuf[MAX_TMPBUF_LEN];
@@ -96,7 +97,7 @@ int ARPResolve(gpacket_t *in_pkt)
 	ARPSend2Output(in_pkt);
 
 	return EXIT_SUCCESS;
-}
+}*/
 
 
 /*
@@ -120,9 +121,6 @@ void ARPProcess(gpacket_t *pkt)
 		return;
 	}
 
-
-	verbose(2, "[ARPProcess]:: adding sender of received packet to ARP table");
-	ARPAddEntry(gNtohl((uchar *)tmpbuf, apkt->src_ip_addr), apkt->src_hw_addr);
 
 	// Check it's actually destined to us,if not throw packet
 	if (COMPARE_IP(apkt->dst_ip_addr, gHtonl((uchar *)tmpbuf, pkt->frame.src_ip_addr)) != 0)
@@ -165,7 +163,7 @@ void ARPProcess(gpacket_t *pkt)
 	{
 		// Flush buffer of any packets waiting for the incoming ARP..
 		verbose(2, "[ARPProcess]:: packet was ARP REPLY... ");
-		ARPFlushBuffer(gNtohl((uchar *)tmpbuf, apkt->src_ip_addr), apkt->src_hw_addr);
+		//ARPFlushBuffer(gNtohl((uchar *)tmpbuf, apkt->src_ip_addr), apkt->src_hw_addr);
 		verbose(2, "[ARPProcess]:: flushed the ARP buffer ... ");
 	}
 	else
@@ -182,7 +180,7 @@ void ARPProcess(gpacket_t *pkt)
 /*
  * initialize the ARP table
  */
-void ARPInitTable()
+/*void ARPInitTable()
 {
 	int i;
 
@@ -193,12 +191,12 @@ void ARPInitTable()
 
 	verbose(2, "[ARPInitTable]:: ARP table initialized.. ");
 	return;
-}
+}*/
 
-void ARPReInitTable()
+/*void ARPReInitTable()
 {
 	ARPInitTable();
-}
+}*/
 
 
 /*
@@ -208,7 +206,7 @@ void ARPReInitTable()
  * The MAC is only set when the return status is EXIT_SUCCESS. If error,
  * the MAC address (mac_addr) is undefined.
  */
-int ARPFindEntry(uchar *ip_addr, uchar *mac_addr)
+/*int ARPFindEntry(uchar *ip_addr, uchar *mac_addr)
 {
 	int i;
 	char tmpbuf[MAX_TMPBUF_LEN];
@@ -227,7 +225,7 @@ int ARPFindEntry(uchar *ip_addr, uchar *mac_addr)
 
 	verbose(2, "[ARPFindEntry]:: failed to find ARP entry for IP %s", IP2Dot(tmpbuf, ip_addr));
 	return EXIT_FAILURE;
-}
+}*/
 
 
 
@@ -237,7 +235,7 @@ int ARPFindEntry(uchar *ip_addr, uchar *mac_addr)
  *            uchar *mac_addr - the MAC address (6 bytes)
  * RETURNS: Nothing
  */
-void ARPAddEntry(uchar *ip_addr, uchar *mac_addr)
+/*void ARPAddEntry(uchar *ip_addr, uchar *mac_addr)
 {
 	int i;
 	int empty_slot = MAX_ARP;
@@ -277,13 +275,13 @@ void ARPAddEntry(uchar *ip_addr, uchar *mac_addr)
 	       IP2Dot(tmpbuf, ip_addr), MAC2Colon(tmpbuf+20, mac_addr));
 
 	return;
-}
+}*/
 
 
 /*
  * print the ARP table
  */
-void ARPPrintTable(void)
+/*void ARPPrintTable(void)
 {
 	int i;
 	char tmpbuf[MAX_TMPBUF_LEN];
@@ -298,12 +296,12 @@ void ARPPrintTable(void)
 			printf("%d\t%s\t%s\n", i, IP2Dot(tmpbuf, ARPtable[i].ip_addr), MAC2Colon((tmpbuf+20), ARPtable[i].mac_addr));
 	printf("-----------------------------------------------------------\n");
 	return;
-}
+}*/
 
 /*
  * Delete ARP entry with the given IP address
  */
-void ARPDeleteEntry(char *ip_addr)
+/*void ARPDeleteEntry(char *ip_addr)
 {
 	int i;
 
@@ -317,14 +315,14 @@ void ARPDeleteEntry(char *ip_addr)
 		}
 	}
 	return;
-}
+}*/
 
 
 /*
  * send an ARP request to eventually process message,
  * a copy of which is now in the buffer
  */
-void ARPSendRequest(gpacket_t *pkt)
+/*void ARPSendRequest(gpacket_t *pkt)
 {
 	arp_packet_t *apkt = (arp_packet_t *) pkt->data.data;
 	uchar bcast_addr[6];
@@ -332,11 +330,11 @@ void ARPSendRequest(gpacket_t *pkt)
 
 	memset(bcast_addr, 0xFF, 6);
 
-	/*
+
 	 * Create ARP REQUEST packet
 	 * ether header will be set in GNET_ADAPTER
 	 * arp header
-	 */
+
 	apkt->hw_addr_type = htons(ETHERNET_PROTOCOL);      // set hw type
 	apkt->arp_prot = htons(IP_PROTOCOL);                // set prtotocol address format
 
@@ -362,7 +360,7 @@ void ARPSendRequest(gpacket_t *pkt)
 	ARPSend2Output(pkt);
 
 	return;
-}
+}*/
 
 
 /*-------------------------------------------------------------------------
@@ -373,7 +371,7 @@ void ARPSendRequest(gpacket_t *pkt)
 /*
  * initialize buffer
  */
-void ARPInitBuffer()
+/*void ARPInitBuffer()
 {
 	int i;
 
@@ -384,7 +382,7 @@ void ARPInitBuffer()
 
 	verbose(2, "[initARPBuffer]:: packet buffer initialized");
 	return;
-}
+}*/
 
 
 /*
@@ -392,7 +390,7 @@ void ARPInitBuffer()
  * ARGUMENTS: in_pkt - pointer to message that is to be copied into buffer
  * RETURNS: none
  */
-void ARPAddBuffer(gpacket_t *in_pkt)
+/*void ARPAddBuffer(gpacket_t *in_pkt)
 {
 	int i;
 	gpacket_t *cppkt;
@@ -419,7 +417,7 @@ void ARPAddBuffer(gpacket_t *in_pkt)
 	buf_replace_indx = (buf_replace_indx + 1) % MAX_ARP_BUFFERS; // adjust for FIFO
 
 	return;
-}
+}*/
 
 
 /*
@@ -429,7 +427,7 @@ void ARPAddBuffer(gpacket_t *in_pkt)
  * RETURNS: The function returns EXIT_SUCCESS if packet was found and copied,
  * or EXIT_FAILURE if it was not found.
  */
-int ARPGetBuffer(gpacket_t **out_pkt, uchar *nexthop)
+/*int ARPGetBuffer(gpacket_t **out_pkt, uchar *nexthop)
 {
 	int i;
 	char tmpbuf[MAX_TMPBUF_LEN];
@@ -450,14 +448,14 @@ int ARPGetBuffer(gpacket_t **out_pkt, uchar *nexthop)
 	}
 	verbose(2, "[ARPGetBuffer]:: no match for nexthop %s", IP2Dot(tmpbuf, nexthop));
 	return EXIT_FAILURE;
-}
+}*/
 
 
 /*
  * flush all packets from buffer matching the nexthop
  * for which we now have an ARP entry
  */
-void ARPFlushBuffer(char *next_hop, char *mac_addr)
+/*void ARPFlushBuffer(char *next_hop, char *mac_addr)
 {
 	gpacket_t *bfrd_msg;
 	char tmpbuf[MAX_TMPBUF_LEN];
@@ -477,4 +475,4 @@ void ARPFlushBuffer(char *next_hop, char *mac_addr)
 	}
 
 	return;
-}
+}*/

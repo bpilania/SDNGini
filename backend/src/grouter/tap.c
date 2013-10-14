@@ -48,12 +48,12 @@ void *toTapDev(void *arg)
 	if ((iface = findInterface(inpkt->frame.dst_interface)) != NULL)
 	{
 		/* send IP packet or ARP reply */
-		if (inpkt->data.header.prot == htons(ARP_PROTOCOL))
+/*		if (inpkt->data.header.prot == htons(ARP_PROTOCOL))
 		{
 			apkt = (arp_packet_t *) inpkt->data.data;
 			COPY_MAC(apkt->src_hw_addr, iface->mac_addr);
 			COPY_IP(apkt->src_ip_addr, gHtonl(tmpbuf, iface->ip_addr));
-		}
+		}*/
 		pkt_size = findPacketSize(&(inpkt->data));
 
 		verbose(2, "[toTapDev]:: tap_sendto called for interface %d.. ", iface->interface_id);

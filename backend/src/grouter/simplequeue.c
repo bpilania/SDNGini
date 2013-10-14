@@ -113,6 +113,7 @@ int copy2Queue(simplequeue_t *msgqueue, void *data, int size)
 
 int writeQueue(simplequeue_t *msgqueue, void *data, int size)
 {
+	printf("\n\n*********************CURRENT QUEUE SIZE BEFORE ADDING**** :: %d\n\n",msgqueue->cursize);
 	simplewrapper_t *swrap;
 
 	if ((swrap = (simplewrapper_t *)malloc(sizeof(simplewrapper_t))) == NULL)
@@ -139,6 +140,7 @@ int writeQueue(simplequeue_t *msgqueue, void *data, int size)
 		}
 	}
 	list_push(msgqueue->queue, swrap);
+
 	msgqueue->cursize++;
 	msgqueue->bytesleft += size;
 
@@ -146,6 +148,8 @@ int writeQueue(simplequeue_t *msgqueue, void *data, int size)
 		pthread_cond_signal(&(msgqueue->qempty));
 
 	pthread_mutex_unlock(&(msgqueue->qlock));
+	printf("\n\n*********************CURRENT QUEUE SIZE AFTER ADDING**** :: %d\n\n",msgqueue->cursize);
+
 	return EXIT_SUCCESS;
 }
 

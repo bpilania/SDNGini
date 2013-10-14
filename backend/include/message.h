@@ -11,6 +11,7 @@
 
 #include <sys/types.h>
 #include "grouter.h"
+#include "simplequeue.h"
 
 
 #define MAX_IPREVLENGTH_ICMP            50       // maximum previous header sent back
@@ -54,6 +55,7 @@ typedef struct _gpacket_t
 	pkt_data_t data;
 } gpacket_t;
 
+simplequeue_t *outputQ, *queue1, *queue2;
 
 gpacket_t *duplicatePacket(gpacket_t *inpkt);
 void printSepLine(char *start, char *end, int count, char sep);
